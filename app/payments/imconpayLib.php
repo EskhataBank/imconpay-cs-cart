@@ -54,7 +54,7 @@ class ImconPay
                 if (((int)$lastNumber) > 0) {
                     $lastNumber++;
                     return $lastNumber;
-                } else return 100;
+                } else return 1000;
             }
         }
     }
