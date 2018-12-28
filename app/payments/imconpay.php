@@ -16,12 +16,17 @@ require_once($ExternalLibPath);
 if (defined('PAYMENT_NOTIFICATION')) {
 
 
-   /* $pp_response = array();
+
+    echo 'Success';
+
+    $pp_response = array();
     $pp_response['order_status'] = 'F';
     $pp_response['reason_text'] = __('text_transaction_declined');
     $order_id = !empty($_REQUEST['order_id']) ? (int)$_REQUEST['order_id'] : 0;
 
     if ($mode == 'response' && !empty($_REQUEST['order_id'])) {
+
+        echo ' Response Success';
 
         $order_info = fn_get_order_info($order_id);
 
@@ -45,7 +50,10 @@ if (defined('PAYMENT_NOTIFICATION')) {
 
             }
         }
-    } elseif ($mode == 'sucsses' && !empty($_REQUEST['order_id'])) {
+    } elseif ($mode == 'success' && !empty($_REQUEST['order_id'])) {
+
+        echo ' success Success';
+
         if ($response == true && $order_info['status'] == 'N') {
             if ($_REQUEST['order_status'] == ImconPayCls::ORDER_APPROVED) {
                 $pp_response['order_status'] = 'P';
@@ -54,7 +62,7 @@ if (defined('PAYMENT_NOTIFICATION')) {
                 fn_finish_payment($order_id, $pp_response);
             }
         }
-    }*/
+    }
     exit;
 
 } else {
@@ -66,8 +74,11 @@ if (defined('PAYMENT_NOTIFICATION')) {
         $amount = fn_format_price($order_info['total'], $processor_data['processor_params']['currency']);
         $currency_f = $processor_data['processor_params']['currency'];
     }
-    $confirm_url = fn_url("payment_notification.sucsses?payment=imconpay&order_id=$order_id", AREA, 'current');
+    $confirm_url = fn_url("payment_notification.success?payment=imconpay&order_id=$order_id", AREA, 'current');
     $response_url = fn_url("payment_notification.response?payment=imconpay&order_id=$order_id", AREA, 'current');
+
+    echo "confirmURL is $confirm_url </br>";
+    echo "responseURL is $response_url </br>";
 
     $imcon = new ImconPay("http://localhost:8012/httpexample/");
 
