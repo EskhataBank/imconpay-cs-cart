@@ -4,15 +4,51 @@
     <name>ImconPay</name>
     <copyright>pay.imcon.tj</copyright>
     <authorEmail>24tech.tj@gmail.com</authorEmail>
-    <version>1.0.0</version>
-    <description>Сервис ImconPay предоставляет возможность принимать оплату товаров и услуг посредством локальных банковских карт ОАО «Банк Эсхата» и ЗАО МДО «Имон Интернешнл»</description>
+    <version>1.0</version>
+    <description>Сервис ImconPay предоставляет возможность принимать оплату товаров и услуг посредством локальных банковских карт ОАО «Банк Эсхата» и ЗАО МДО «Имон Интернешнл»
+    </description>
     <priority>1</priority>
     <dependencies></dependencies>
     <queries>
         <item for="install">
-            INSERT INTO `?:payment_processors` (`processor_id`, `processor`, `processor_script`, `processor_template`, `admin_template`, `callback`, `type`) VALUES
-            ('', 'ImconPay', 'imconpay.php', 'views/orders/components/payments/cc_outside.tpl', 'imconpay.tpl', 'N', 'P')
+            INSERT INTO `?:payment_processors` (`processor_id`, `processor`, `processor_script`, `processor_template`,`admin_template`, `callback`, `type`) VALUES('', 'ImconPay', 'imconpay.php', 'views/orders/components/payments/cc_outside.tpl', 'imconpay.tpl', 'N','P')
+        </item>
+        <item for="install">DROP TABLE IF EXISTS ?:orders_payments_signature;</item>
+        <item for="install">
+            CREATE TABLE `?:orders_payments_signature` (
+            `order_id` int(11) unsigned NOT NULL DEFAULT 0,
+            `service_order_id` int(11) unsigned NOT NULL DEFAULT 0,
+            `signature` varchar(100) NOT NULL DEFAULT '',
+            `created_on` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            ) Engine=MyISAM DEFAULT CHARSET UTF8;
         </item>
         <item for="uninstall">DELETE FROM ?:payment_processors WHERE processor = 'ImconPay'</item>
+        <item for="uninstall">DROP TABLE IF EXISTS ?:orders_payments_signature;</item>
     </queries>
+
+    <settings edition_type="ROOT">
+        <sections>
+            <section id="general">
+                <items>
+
+
+                <item id="client_code">
+                    <name>Client code</name>
+                    <type>input</type>
+                </item>
+
+                <item id="client_api_key">
+                    <name>Client API key</name>
+                    <type>input</type>
+                </item>
+
+                <item id="root_api_key">
+                    <name>Client API root</name>
+                    <type>input</type>
+                </item>
+
+                </items>
+            </section>
+        </sections>
+    </settings>
 </addon>
