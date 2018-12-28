@@ -16,7 +16,7 @@ require_once($ExternalLibPath);
 if (defined('PAYMENT_NOTIFICATION')) {
 
 
-    $pp_response = array();
+   /* $pp_response = array();
     $pp_response['order_status'] = 'F';
     $pp_response['reason_text'] = __('text_transaction_declined');
     $order_id = !empty($_REQUEST['order_id']) ? (int)$_REQUEST['order_id'] : 0;
@@ -54,12 +54,11 @@ if (defined('PAYMENT_NOTIFICATION')) {
                 fn_finish_payment($order_id, $pp_response);
             }
         }
-    }
+    }*/
     exit;
 
 } else {
 
-    //$payment_url = ImconPayCls::URL;
     $currency_f = CART_SECONDARY_CURRENCY;
     if ($processor_data['processor_params']['currency'] == 'shop_cur') {
         $amount = fn_format_price_by_currency($order_info['total']);
@@ -70,25 +69,7 @@ if (defined('PAYMENT_NOTIFICATION')) {
     $confirm_url = fn_url("payment_notification.sucsses?payment=imconpay&order_id=$order_id", AREA, 'current');
     $response_url = fn_url("payment_notification.response?payment=imconpay&order_id=$order_id", AREA, 'current');
 
-    /*$post_data = array(
-        'merchant_id' => $processor_data['processor_params']['imconpay_merchantid'],
-        'lang' => $processor_data['processor_params']['imconpay_lang'],
-        'order_id' => time() . $order_id,
-        'order_desc' => '#' . $order_id,
-        'amount' => $amount,
-        'currency' => $currency_f,
-        'server_callback_url' => $confirm_url,
-        'response_url' => $response_url
-    );
-
-    $signature = ImconPayCls::
-    $post_data['signature'] = ImconPayCls::getSignature($post_data, $processor_data['processor_params']['imconpay_merchnatSecretKey']);*/
-
-
-    //fn_create_payment_form($payment_url."", $post_data, 'ImconPay', false);
-    //fn_create_payment_form($matches[1], array(), '', true, 'get');
-
-    $imcon = new ImconPayCls("http://localhost:8012/httpexample/");
+    $imcon = new ImconPay("http://localhost:8012/httpexample/");
 
     $signature = $imcon->getSignature($order_id, $amount);
     $serviceOrderId = $imcon->getServiceOrder();
