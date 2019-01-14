@@ -16,8 +16,7 @@ require_once($ExternalLibPath);
 if (defined('PAYMENT_NOTIFICATION')) {
 
 
-
-    echo 'Success';
+    //echo 'Success';
 
     $pp_response = array();
     $pp_response['order_status'] = 'F';
@@ -26,22 +25,35 @@ if (defined('PAYMENT_NOTIFICATION')) {
 
     if ($mode == 'response' && !empty($_REQUEST['order_id'])) {
 
-        echo ' Response Success';
+        //echo ' Response Success';
 
-        $order_info = fn_get_order_info($order_id);
-
-        if (empty($processor_data)) {
-            $processor_data = fn_get_processor_data($order_info['payment_id']);
+        $imcon = new ImconPay("http://localhost:8012/httpexample/");
+        $order_id = $imcon->getOrderId($order_id);
+        if (strlen($order_id) == 0) {
+            echo "Error: Cannot find orderId.";
         }
-        $option = array('merchant_id' => $processor_data['processor_params']['imconpay_merchantid'],
-            'secret_key' => $processor_data['processor_params']['imconpay_merchnatSecretKey']);
-        $response = ImconPayCls::isPaymentValid($option, $_POST);
+        //echo $order_id;
+        if ($_REQUEST['success'] == true) {
 
-        if ($response === true && $order_info['status'] == 'N') {
-            if ($_REQUEST['order_status'] == ImconPayCls::ORDER_APPROVED) {
+            $order_info = fn_get_order_info($order_id);
+            $option['amount'] = $amount = fn_format_price($order_info['total']);
+            $option['order_id'] = $order_id;
+            $request['order_id'] = $_REQUEST['order_id'];
+            $request['signature'] = $_REQUEST['signature'];
+
+            $response = $imcon->isPaymentValid($option, $request);
+
+            echo "response:" . $response . "</br>";
+           // if ($response === true && $order_info['status'] == 'N') {
+            if ($response === true) {
+
+                echo $response;
+
+                echo $order_id;
+
                 $pp_response['order_status'] = 'P';
                 $pp_response['reason_text'] = __('transaction_approved');
-                $pp_response['transaction_id'] = $_REQUEST['payment_id'];
+                $pp_response['transaction_id'] = $_REQUEST['order_id'];
                 if (fn_check_payment_script('imconpay.php', $order_id)) {
                     fn_finish_payment($order_id, $pp_response);
                     fn_order_placement_routines('route', $order_id);
@@ -50,17 +62,17 @@ if (defined('PAYMENT_NOTIFICATION')) {
 
             }
         }
+
+
     } elseif ($mode == 'success' && !empty($_REQUEST['order_id'])) {
 
         echo ' success Success';
 
         if ($response == true && $order_info['status'] == 'N') {
-            if ($_REQUEST['order_status'] == ImconPayCls::ORDER_APPROVED) {
                 $pp_response['order_status'] = 'P';
                 $pp_response['reason_text'] = __('transaction_approved');
-                $pp_response['transaction_id'] = $_REQUEST['payment_id'];
+                $pp_response['transaction_id'] = $_REQUEST['order_id'];
                 fn_finish_payment($order_id, $pp_response);
-            }
         }
     }
     exit;
