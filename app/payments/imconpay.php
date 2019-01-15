@@ -15,9 +15,6 @@ require_once($ExternalLibPath);
 
 if (defined('PAYMENT_NOTIFICATION')) {
 
-
-    //echo 'Success';
-
     $pp_response = array();
     $pp_response['order_status'] = 'F';
     $pp_response['reason_text'] = __('text_transaction_declined');
@@ -25,14 +22,12 @@ if (defined('PAYMENT_NOTIFICATION')) {
 
     if ($mode == 'response' && !empty($_REQUEST['order_id'])) {
 
-        //echo ' Response Success';
-
         $imcon = new ImconPay("http://localhost:8012/httpexample/");
         $order_id = $imcon->getOrderId($order_id);
         if (strlen($order_id) == 0) {
             echo "Error: Cannot find orderId.";
         }
-        //echo $order_id;
+
         if ($_REQUEST['success'] == true) {
 
             $order_info = fn_get_order_info($order_id);
@@ -40,16 +35,10 @@ if (defined('PAYMENT_NOTIFICATION')) {
             $option['order_id'] = $order_id;
             $request['order_id'] = $_REQUEST['order_id'];
             $request['signature'] = $_REQUEST['signature'];
-
             $response = $imcon->isPaymentValid($option, $request);
 
-            echo "response:" . $response . "</br>";
            // if ($response === true && $order_info['status'] == 'N') {
             if ($response === true) {
-
-                echo $response;
-
-                echo $order_id;
 
                 $pp_response['order_status'] = 'P';
                 $pp_response['reason_text'] = __('transaction_approved');
@@ -65,8 +54,6 @@ if (defined('PAYMENT_NOTIFICATION')) {
 
 
     } elseif ($mode == 'success' && !empty($_REQUEST['order_id'])) {
-
-        echo ' success Success';
 
         if ($response == true && $order_info['status'] == 'N') {
                 $pp_response['order_status'] = 'P';
