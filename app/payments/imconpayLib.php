@@ -124,22 +124,14 @@ class ImconPay
     public function isPaymentValid($option, $request)
     {
 
-        echo "ok</br>";
-        echo $option['order_id'] . " ok</br>";
-        echo $request['order_id'] . " ok</br>";
         //if ($option['order_id'] != $request['order_id']) return false;
-        echo "orders is ok</br>";
         $str = $this->clientCode . '&' . $request['order_id'] . '&' . $option['amount'] . '&' . $this->itemUrl . '&' . $this->rootApiKey;
         $str = urlencode($str);
         $signature = hash('sha256', $str); // "{client_code} + & + {order_id} + & + {amount} + & + {item_url} + & + {root_api_key}";
-        echo $signature . " ok</br>";
-        echo $request['signature'] . " ok</br>";
-
 
         if ($request['signature'] === $signature) {
             return true;
         } else return false;
-
 
     }
 }
