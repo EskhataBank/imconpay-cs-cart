@@ -76,9 +76,6 @@ if (defined('PAYMENT_NOTIFICATION')) {
     $confirm_url = fn_url("payment_notification.success?payment=imconpay&order_id=$order_id", AREA, 'current');
     $response_url = fn_url("payment_notification.response?payment=imconpay&order_id=$order_id", AREA, 'current');
 
-    echo "confirmURL is $confirm_url </br>";
-    echo "responseURL is $response_url </br>";
-
     $imcon = new ImconPay("http://localhost:8012/httpexample/");
 
     $signature = $imcon->getSignature($order_id, $amount);
