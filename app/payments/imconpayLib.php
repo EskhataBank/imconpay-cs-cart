@@ -20,13 +20,32 @@ class ImconPay
     private $itemUrl;
     private $serviceOrderId;
 
-    public function __construct($productUrl)
+    public function __construct($productUrl = null)
     {
         $this->itemUrl = $productUrl;
         $this->serviceOrderId = $this->generateServiceOrder();
         $this->clientCode = Registry::get('addons.imconpay.client_code');
         $this->clientApiKey = Registry::get('addons.imconpay.client_api_key');
         $this->rootApiKey = Registry::get('addons.imconpay.root_api_key');
+    }
+
+    public function setItemUrl($productUrl)
+    {
+        $server = $_SERVER['HTTP_HOST'];
+        $prodServer = strpos($_SERVER['HTTP_HOST'], 'barakat.tj');
+        $devServer = strpos($_SERVER['HTTP_HOST'], 'test.mazza.tj');
+
+        if ($devServer === false && $prodServer === false) {
+            echo "<p>Error retrieving information from server " . $server;
+            echo "</br>Please use your browsers back button and check that you're in the right place. </br>If you need immediate assistance, please <a href=\"mailto:24tech.tj@gmail.com\">send us an email</a> instead.</p>";
+            exit();
+        }
+        $this->itemUrl = $server . '/index.php?dispatch=orders.details&order_id=' . $productUrl;
+    }
+
+    public function getItemUrl()
+    {
+        return $this->itemUrl;
     }
 
     public function getSignature($orderId, $amount)
