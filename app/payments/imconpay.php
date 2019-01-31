@@ -22,8 +22,9 @@ if (defined('PAYMENT_NOTIFICATION')) {
 
     if ($mode == 'response' && !empty($_REQUEST['order_id'])) {
 
-        $imcon = new ImconPay("http://localhost:8012/httpexample/");
+        $imcon = new ImconPay();
         $order_id = $imcon->getOrderId($order_id);
+        $imcon->setItemUrl($order_id);
         if (strlen($order_id) == 0) {
             echo "Error: Cannot find orderId.";
         }
@@ -37,8 +38,8 @@ if (defined('PAYMENT_NOTIFICATION')) {
             $request['signature'] = $_REQUEST['signature'];
             $response = $imcon->isPaymentValid($option, $request);
 
-           // if ($response === true && $order_info['status'] == 'N') {
-            if ($response === true) {
+           if ($response === true && $order_info['status'] == 'N') {
+           // if ($response === true) {
 
                 $pp_response['order_status'] = 'P';
                 $pp_response['reason_text'] = __('transaction_approved');
@@ -76,7 +77,8 @@ if (defined('PAYMENT_NOTIFICATION')) {
     $confirm_url = fn_url("payment_notification.success?payment=imconpay&order_id=$order_id", AREA, 'current');
     $response_url = fn_url("payment_notification.response?payment=imconpay&order_id=$order_id", AREA, 'current');
 
-    $imcon = new ImconPay("http://localhost:8012/httpexample/");
+    $imcon = new ImconPay();
+    $imcon->setItemUrl($order_id);
 
     $signature = $imcon->getSignature($order_id, $amount);
     $serviceOrderId = $imcon->getServiceOrder();
